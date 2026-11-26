@@ -1,0 +1,28 @@
+{
+  "name": "tomymaritano.com",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal site of Tomás Maritano. Blueprint system, pixel soul. Make it fail loud.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "next": "^16.4.6",
+    "next-mdx-remote": "^6.0.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.6.0"
+  },
+  "packageManager": "pnpm@12.23.0"
+}

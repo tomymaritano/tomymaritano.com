@@ -1,0 +1,50 @@
+---
+title: "[POST TITLE]"
+dek: "[One sentence on what broke, who felt it and what changed after.]"
+kind: POSTMORTEM
+date: 2026-01-01
+draft: true
+---
+
+{/* Copy this file, rename it, set draft: false. */}
+
+<TLDR items={["[What broke, in one line.]", "[Why it stayed silent, in one line.]", "[What now fails loud instead.]"]} />
+
+<Incident
+  stages={[
+    "[Stage 1: the first signal, and who or what noticed it.]",
+    "[Stage 2: where it actually broke, and why nothing complained.]",
+    "[Stage 3: the fix that shipped, and how you knew it worked.]",
+    "[Stage 4: what now fails loud so this never hides again.]"
+  ]}
+  nodes={["[INPUT]", "[SERVICE]", "[DEPENDENCY]"]}
+/>
+
+## Context
+
+[What the system does, who depends on it, and what normal looks like.]
+
+## What happened
+
+[The failure as users felt it, before any explanation.]
+
+## Timeline
+
+| Time | Stage | Event |
+| --- | --- | --- |
+| [HH:MM] | DETECT | [First alert or report.] |
+| [HH:MM] | DIAGNOSE | [Root cause found.] |
+| [HH:MM] | FIX | [Fix deployed.] |
+| [HH:MM] | LEARN | [Guardrail added.] |
+
+## Root cause
+
+[The one condition that, if removed, prevents the whole chain.]
+
+## What now fails loud
+
+[The alert, check or crash you added so this never goes silent again.]
+
+## What I'd tell my team
+
+[The leadership lesson: process, people or decision, not just code.]
