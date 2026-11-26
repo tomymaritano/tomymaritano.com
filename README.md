@@ -1,82 +1,60 @@
 # tomymaritano.com
 
-```
-       *
-       |
-  .---------.
-  |  >   _  |      Blueprint system. Pixel soul.
-  |         |      Make it fail loud.
-  '---------'
-     |   |
-```
+Personal site of **Tomás Maritano**, Engineering Manager from Argentina. A 3D mechanical keyboard on a desk: every colored key opens one of my projects, and each project's room wears that project's own brand. Blink, the tiny terminal on the desk, shows you around.
 
-Personal site of **Tomás Maritano**, engineering lead from Argentina. Postmortems, architecture notes, lessons from leading a team, and the small apps I build after hours.
-
-## Stack
-
-- **Next.js** (App Router, React Server Components, TypeScript), fully static.
-- **MDX** content in `/content`, rendered with `next-mdx-remote` + GFM.
-- A **content adapter** (`src/content`) so the source can switch from MDX files to **Ghost** (headless, Content API) with one env var.
-- No UI framework, no WebGL, no trackers. Plain CSS with three themes and scroll-driven animations.
+Make it fail loud.
 
 ## Run it
 
 ```bash
 pnpm install
-pnpm dev        # http://localhost:3000
-pnpm build      # static production build
+pnpm dev         # http://localhost:3000
+pnpm typecheck
+pnpm build       # static production build
 ```
 
-## Structure
+## How it's put together
 
 ```
-content/
-  writing/*.mdx      posts (frontmatter: title, dek, kind, date, draft)
-  builds/*.mdx       products (status, device, platform, metric, url, repo...)
+content/writing/*.mdx    blog posts (files starting with _ are templates)
 src/
-  app/               routes: /, /writing, /writing/[slug], /builds, /builds/[slug], /now, 404
-  components/        Blink, DeviceMockup, Showcase, Hero, Story, Incident...
-  content/           types + adapter (mdx-source, ghost-source) + now.ts
-  styles/globals.css themes, grid, motion
+  content/               the facts, one place each
+    projects.ts          every project: brand, case study (STAR), results
+    profile.ts           bio, experience, skills, links
+    writing/             blog adapter: MDX files today, Ghost with CONTENT_SOURCE=ghost
+  routes.ts              Route <-> URL, both ways. Nothing else builds paths.
+  app/
+    (keyboard)/          /, /about, /experience, /work, /work/[slug], /contact
+    writing/             /writing, /writing/[slug] (plain 2D pages)
+  components/
+    KeyboardSite.tsx     hosts the 3D scene in the (keyboard) layout, syncs it with the URL
+    TextLayer.tsx        the text version of every room (SEO, screen readers, no-WebGL)
+  three/                 the 3D site, framework-free
+    experience.ts        mountExperience(canvas, { initial, onNavigate }) -> { go, setInteractive, dispose }
+    stage.ts             renderer, lights, bloom + grain, adaptive quality
+    keyboard.ts          layout, which key opens which room, key physics
+    blink.ts  desk.ts  hud.ts  sound.ts  commands.ts  themes.ts  kit.ts
+    rooms/               one builder per room; pieces.ts holds each project's signature object
 ```
 
-## Writing a post
+**The URL is the source of truth.** The 3D scene lives in the `(keyboard)` layout, so it never remounts. Clicking a key starts the camera dive and pushes the new URL; the page underneath swaps its text version; back and forward call `experience.go(route)`. Moves requested mid-flight wait until the camera lands.
 
-Copy `content/writing/_template-postmortem.mdx`, rename it, set `draft: false`. Posts can use these components inline:
+**Adding a project** is one entry in `src/content/projects.ts` (pick a free letter for `key`). Optionally give it a signature object in `src/three/rooms/pieces.ts`. Everything else (keycap, room, projects index, text version, sitemap) follows.
 
-- `<Incident stages={[...]} nodes={[...]} />` interactive four-stage incident figure
-- `<TLDR items={[...]} />`
-- `<Blink pose="error" cell={6} />` poses: idle, wave, error, ship, sleep, think
-- `<DeviceMockup device="browser" title="..." />`
+**Text in `[brackets]`** in the content files is a placeholder waiting for a real fact.
 
-## Adding a product
+## Design review with Plumbline
 
-Add `content/builds/<slug>.mdx`. `device` picks the mockup frame: `browser`, `window`, `ide`, `menubar`, `sliders`, `terminal`, `phone`. Put a real screenshot in `public/` and set `screenshot: /file.png` to replace the schematic UI.
+This repo uses [Plumbline](https://github.com/tomymaritano/plumbline), design skills for coding agents based on *A Philosophy of Software Design*.
 
-## Switching to Ghost
+- **Locally:** `.claude/settings.json` registers the Plumbline marketplace and enables the plugin, so Claude Code offers to install it when you open the repo. Other agents: see Plumbline's README. `AGENTS.md` tells every agent to run `red-flags` after large changes.
+- **On pull requests:** `.github/workflows/design-review.yml` runs Plumbline's `code-evolution` review and comments only when a change adds a real design problem. It needs an `ANTHROPIC_API_KEY` repository secret; without it the job skips and stays green.
+- **Memory:** `.plumbline/findings.md` records what reviews found, what was fixed and which trade-offs were accepted, so reviews don't repeat themselves.
 
-```bash
-cp .env.example .env.local
-# CONTENT_SOURCE=ghost, GHOST_URL, GHOST_CONTENT_API_KEY
-```
+## Interactions
 
-Posts then come from Ghost (the first tag sets the kind: postmortem, architecture, leading-teams, build-log). Builds stay in MDX.
-
-## Brand
-
-- **Themes:** Blueprint (default), Pixel, Paper (light). The site respects `prefers-color-scheme` and remembers the choice.
-- **Type:** Silkscreen (wordmark, H1, buttons), Space Grotesk (text), IBM Plex Mono (labels).
-- **Color:** Blueprint `#0E3A8A`, Line `#EAF2FF`, Sol `#F6B40E`, Night `#1B1F3B`, Loud `#FF6B97` (errors only), Paper `#F6F5F1`.
-- **Motion:** everything respects `prefers-reduced-motion`.
-
-## TODO
-
-- [ ] Real metrics and screenshots for each build
-- [ ] Plumbline one-line description
-- [ ] Wire the build log form to a newsletter provider
-- [ ] Social handles
-- [ ] OG images per post
+Colored keys open projects. `TAB` experience, `CAPS` projects, `SPACE` about, `ENTER` contact. `ESC` or `BACKSPACE` leaves a room. Scroll inside a room for the case study. `/` opens a command line (`help`, `ls`, `cd <name>`, `hire`, `theme day|night|retro`, `rgb`, `whoami`). `M` mutes. There may be a code involving arrows.
 
 ## License
 
-Code: MIT. Writing and the Blink character: © Tomás Maritano.
+MIT

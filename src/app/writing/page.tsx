@@ -1,29 +1,31 @@
+import Link from 'next/link';
 import type { Metadata } from 'next';
-import { content } from '@/content';
-import { Blink } from '@/components/Blink';
-import { SiteFooter } from '@/components/SiteFooter';
-import { SiteHeader } from '@/components/SiteHeader';
-import { WritingIndex } from '@/components/WritingIndex';
+import { WritingHeader } from '@/components/writing/WritingHeader';
+import { writing } from '@/content/writing';
 
-export const metadata: Metadata = { title: '/writing', description: 'Postmortems, architecture notes and lessons from leading a team.' };
+export const metadata: Metadata = { title: 'Writing', description: 'Postmortems, architecture notes and lessons from leading a team.' };
 
-export default async function WritingPage() {
-  const posts = await content.getPosts();
+export default async function WritingIndex() {
+  const posts = await writing.getPosts();
   return (
     <>
-      <SiteHeader active="writing" />
-      <main id="main" className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 48, paddingTop: 40 }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 640 }}>
-            <span className="label up">SHEET 02 · INDEX OF DRAWINGS</span>
-            <h1 className="pixel up" style={{ animationDelay: '.1s', fontSize: 'clamp(40px, 6vw, 72px)', lineHeight: 1 }}>/writing</h1>
-            <p className="muted up" style={{ animationDelay: '.2s', fontSize: 19, lineHeight: 1.55 }}>Postmortems, architecture notes and lessons from leading a team. Every post is dated, and every system is drawn.</p>
-          </div>
-          <Blink pose="think" cell={8} assemble decorative />
-        </div>
-        <WritingIndex posts={posts} />
+      <WritingHeader />
+      <main id="main" className="page">
+        <p className="eyebrow">WRITING</p>
+        <h1 className="display">Notes from shipping.</h1>
+        <p className="lede">Postmortems, architecture notes and lessons from leading a team.</p>
+        <ul className="w-list">
+          {posts.map((p) => (
+            <li key={p.slug}>
+              <Link href={`/writing/${p.slug}`}>
+                <span className="w-meta">{p.kind} · <time dateTime={p.date}>{p.date}</time> · {p.readingMinutes} min</span>
+                <span className="w-title">{p.title}</span>
+                <span className="w-dek">{p.dek}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </main>
-      <SiteFooter />
     </>
   );
 }
