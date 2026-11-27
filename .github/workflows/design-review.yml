@@ -1,0 +1,17 @@
+# Plumbline design review: runs the code-evolution skill on each pull request
+# and comments only when a change adds a boundary problem, a shared root cause,
+# or brings back a finding marked fixed in .plumbline/findings.md.
+# Needs an ANTHROPIC_API_KEY repository secret; without it the job skips green.
+name: Design review
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+jobs:
+  design:
+    if: github.event.pull_request.draft == false
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: tomymaritano/plumbline/.github/workflows/plumbline-review.yml@v1.8.0
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

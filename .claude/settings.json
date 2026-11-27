@@ -1,0 +1,10 @@
+{
+  "extraKnownMarketplaces": {
+    "plumbline-plugins": {
+      "source": { "source": "github", "repo": "tomymaritano/plumbline" }
+    }
+  },
+  "enabledPlugins": {
+    "plumbline@plumbline-plugins": true
+  }
+}

@@ -1,30 +1,24 @@
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Mono, Silkscreen, Space_Grotesk } from 'next/font/google';
-import { themeScript } from '@/components/ThemeSwitch';
-import '@/styles/globals.css';
-
-const pixel = Silkscreen({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-pixel', display: 'swap' });
-const sans = Space_Grotesk({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--font-sans', display: 'swap' });
-const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-mono', display: 'swap' });
+import '@fontsource/inter-tight/800.css';
+import '@fontsource/inter-tight/900.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import './globals.css';
+import { profile } from '@/content/profile';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tomymaritano.com'),
-  title: { default: 'tomymaritano — Make it fail loud', template: '%s · tomymaritano' },
-  description: 'Tomás Maritano, engineering lead from Argentina. Postmortems, architecture notes and the small apps I build after hours.',
-  authors: [{ name: 'Tomás Maritano', url: 'https://tomymaritano.com' }],
-  openGraph: { type: 'website', siteName: 'tomymaritano', locale: 'en_US' },
-  twitter: { card: 'summary_large_image' },
-  alternates: { canonical: '/' },
+  metadataBase: new URL(profile.site),
+  title: { default: `${profile.name} · ${profile.role}`, template: `%s · ${profile.name}` },
+  description: profile.bio,
+  openGraph: { type: 'website', siteName: profile.name, url: profile.site },
 };
 
-export const viewport: Viewport = { themeColor: '#0E3A8A' };
+export const viewport: Viewport = { themeColor: '#08090C', colorScheme: 'dark' };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="blueprint" className={`${pixel.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
+    <html lang="en">
       <body>
         <a className="skip" href="#main">Skip to content</a>
         {children}
